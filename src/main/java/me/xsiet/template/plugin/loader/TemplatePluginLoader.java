@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-@SuppressWarnings({"UnstableApiUsage", "unused"})
+@SuppressWarnings({"unused", "UnstableApiUsage"})
 public class TemplatePluginLoader implements PluginLoader {
     @Override
     public void classloader(@NotNull PluginClasspathBuilder classpathBuilder) {
