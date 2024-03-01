@@ -9,13 +9,19 @@ plugins {
 }
 repositories {
     mavenCentral()
-    Dependency.Repositories.forEach { maven(it) }
+    Dependency.Repositories.forEach {
+        maven(it)
+    }
 }
 dependencies {
     paperweight.paperDevBundle("${paperVersion}-R0.1-SNAPSHOT")
     Dependency.apply {
-        Libraries.forEach { implementation(it) }
-        PaperLibraries.forEach { paperLibrary(it) }
+        Libraries.forEach {
+            implementation(it)
+        }
+        PaperLibraries.forEach {
+            paperLibrary(it)
+        }
     }
 }
 paper {
@@ -23,15 +29,18 @@ paper {
     name = rootProject.name
     version = project.version.toString()
     val title = name!!.replace("-", "")
-    "${group}.${title.lowercase()}.plugin.".apply {
-        main = "${this}${title}Plugin"
-        loader = "${this}loader.${title}PluginLoader"
-    }
+    val packageName = "${group}.${title.lowercase()}.plugin"
+    main = "${packageName}.${title}Plugin"
+    loader = "${packageName}.loader.${title}PluginLoader"
     generateLibrariesJson = true
 }
 tasks {
-    withType<KotlinCompile> { kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString() }
-    processResources { filteringCharset = Charsets.UTF_8.toString() }
+    withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+    processResources {
+        filteringCharset = Charsets.UTF_8.toString()
+    }
     runServer {
         minecraftVersion(paperVersion)
         jvmArgs = arrayListOf("-Dcom.mojang.eula.agree=true")
