@@ -19,23 +19,22 @@ import java.util.stream.Stream;
 @SuppressWarnings({"unused", "UnstableApiUsage"})
 public class TemplatePluginLoader implements PluginLoader {
     @Override
-    public void classloader(@NotNull PluginClasspathBuilder classpathBuilder) {
+    public void classloader(@NotNull PluginClasspathBuilder pluginClasspathBuilder) {
         record PaperLibraries(Map<String, String> repositories, List<String> dependencies) {
             public Stream<RemoteRepository> getRepositories() {
-                return repositories.entrySet().stream().map(it -> new RemoteRepository.Builder(
-                        it.getKey(), "default", it.getValue()
-                ).build());
+                Stream<Map.Entry<String, String>> stream = repositories.entrySet().stream();
+                return stream.map(it -> new RemoteRepository.Builder(it.getKey(), "default", it.getValue()).build());
             }
             public Stream<Dependency> getDependencies() {
                 return dependencies.stream().map(it -> new Dependency(new DefaultArtifact(it), null));
             }
         }
-        PaperLibraries paperLibraries = new Gson().fromJson(new InputStreamReader(
-                Objects.requireNonNull(getClass().getResourceAsStream("/paper-libraries.json")), StandardCharsets.UTF_8
-        ), PaperLibraries.class);
-        MavenLibraryResolver resolver = new MavenLibraryResolver();
-        paperLibraries.getRepositories().forEach(resolver::addRepository);
-        paperLibraries.getDependencies().forEach(resolver::addDependency);
-        classpathBuilder.addLibrary(resolver);
+        InputStream inputStream = Objects.requireNonNull(getClass().getResourceAsStream("/paper-libraries.json"));
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        PaperLibraries paperLibraries = new Gson().fromJson(inputStreamReader, PaperLibraries.class);
+        MavenLibraryResolver mavenLibraryResolver = new MavenLibraryResolver();
+        paperLibraries.getRepositories().forEach(mavenLibraryResolver::addRepository);
+        paperLibraries.getDependencies().forEach(mavenLibraryResolver::addDependency);
+        pluginClasspathBuilder.addLibrary(mavenLibraryResolver);
     }
 }
