@@ -43,6 +43,8 @@ tasks {
     }
     runServer {
         minecraftVersion(paperVersion)
-        jvmArgs = arrayListOf("-Dcom.mojang.eula.agree=true")
+        jvmArgs = arrayListOf(
+            "-Dcom.mojang.eula.agree=true"
+        )
     }
 }
